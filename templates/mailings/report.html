@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Отчет по рассылкам{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Отчет по рассылкам</h1>
+        
+        <!-- Общая статистика -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Всего рассылок</h5>
+                        <p class="card-text display-6">{{ total_mailings }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Активных рассылок</h5>
+                        <p class="card-text display-6">{{ active_mailings }}</p>
+                        <small>Текущее время: {{ now|date:"d.m.Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Успешных попыток</h5>
+                        <p class="card-text display-6">{{ success_attempts }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body">
+                        <h5 class="card-title">Ошибок</h5>
+                        <p class="card-text display-6">{{ failed_attempts }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Статистика отправок за последние 7 дней</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Здесь можно добавить график статистики
+            // Для простоты пока оставим заглушку
+        });
+        </script>
+
+        <!-- Добавим список активных рассылок для наглядности -->
+        {% if active_mailings > 0 %}
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Текущие активные рассылки</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Рассылка</th>
+                                        <th>Начало</th>
+                                        <th>Окончание</th>
+                                        <th>Прогресс</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for mailing in mailings %}
+                                    <tr {% if mailing.status == 'started' %}class="table-success"{% endif %}>
+                                        <td>{{ mailing.id }}</td>
+                                        <td>{{ mailing.message.subject|truncatechars:50 }}</td>
+                                        <td>
+                                            {% if mailing.status == 'created' %}
+                                                <span class="badge bg-secondary">Создана</span>
+                                            {% elif mailing.status == 'started' %}
+                                                <span class="badge bg-success">Запущена</span>
+                                            {% elif mailing.status == 'completed' %}
+                                                <span class="badge bg-danger">Завершена</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ mailing.recipients.count }}</td>
+                                        <td>{{ mailing.success_count }}</td>
+                                        <td>{{ mailing.fail_count }}</td>
+                                        <td>
+                                            <a href="{% url 'mailings:mailing_detail' mailing.pk %}" class="btn btn-sm btn-info" title="Просмотр">👁️</a>
+
+                                            {# Кнопка отправки ТОЛЬКО для активных рассылок #}
+                                            {% if mailing.status == 'started' %}
+                                                <form action="{% url 'mailings:mailing_send' mailing.pk %}"
+                                                      method="post"
+                                                      style="display: inline;"
+                                                      onsubmit="return confirm('Запустить рассылку?\n\nПолучателей: {{ mailing.recipients.count }}\nТема: {{ mailing.message.subject }}')">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Отправить сейчас">
+                                                        🚀
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

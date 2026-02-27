@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ message.subject }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>Просмотр сообщения</h3>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width: 200px;">Тема:</th>
+                        <td>{{ message.subject }}</td>
+                    </tr>
+                    <tr>
+                        <th>Текст сообщения:</th>
+                        <td>{{ message.body|linebreaks }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'mailings:message_list' %}" class="btn btn-secondary">Назад к списку</a>
+                <a href="{% url 'mailings:message_update' message.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'mailings:message_delete' message.pk %}" class="btn btn-danger">Удалить</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+[flake8]
+max-line-length = 119
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv,
+    venv,
+    .env,
+    env,
+    .pytest_cache,
+    .mypy_cache,
+    .coverage,
+    htmlcov,
+    *.egg-info,
+    .idea,
+    .vscode
+ignore =
+    E203,
+    W503,
+    E501,
+    F401,
+    F841,
+    E402
+per-file-ignores =
+    tests/*: S101,S106
+    */__init__.py: F401
+statistics = True
+count = True
+show-source = True

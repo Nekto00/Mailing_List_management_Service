@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление рассылки{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3>Подтверждение удаления</h3>
+            </div>
+            <div class="card-body">
+                <p>Вы уверены, что хотите удалить рассылку?</p>
+                <div class="alert alert-info">
+                    <strong>Сообщение:</strong> {{ object.message.subject }}<br>
+                    <strong>Период:</strong> с {{ object.start_time|date:"d.m.Y H:i" }} по {{ object.end_time|date:"d.m.Y H:i" }}<br>
+                    <strong>Статус:</strong> 
+                    {% if object.status == 'created' %}
+                        <span class="badge bg-secondary">Создана</span>
+                    {% elif object.status == 'started' %}
+                        <span class="badge bg-success">Запущена</span>
+                    {% elif object.status == 'completed' %}
+                        <span class="badge bg-danger">Завершена</span>
+                    {% endif %}
+                </div>
+                <p class="text-danger">Это действие нельзя отменить! Все связанные попытки отправки также будут удалены.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{% url 'mailings:mailing_list' %}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

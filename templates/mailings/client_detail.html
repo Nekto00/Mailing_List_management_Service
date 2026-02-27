@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ client.full_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>Информация о клиенте</h3>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width: 200px;">Ф.И.О.:</th>
+                        <td>{{ client.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{ client.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Комментарий:</th>
+                        <td>{{ client.comment|linebreaks }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'mailings:client_list' %}" class="btn btn-secondary">Назад к списку</a>
+                <a href="{% url 'mailings:client_update' client.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'mailings:client_delete' client.pk %}" class="btn btn-danger">Удалить</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
